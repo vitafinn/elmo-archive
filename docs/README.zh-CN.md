@@ -8,7 +8,7 @@ Windows 工具，可查看保底、人形与武器副本花费，以及服装访
 
 ## 安装
 
-需要 Windows x64、Windows 游戏客户端和 [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)，无需另装代理软件。
+需要 Windows x64、Windows 游戏客户端和 [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)，在游戏内打开访问记录，由 Elmo Archive 的内置功能抓取，无需安装 Fiddler 或独立的 mitmproxy。
 
 1. 在 Releases 下载 **windows-x64.zip**，不要选择“Source code”。若 Releases 为空，表示尚未公开发布。
 2. 解压到可写文件夹，运行 `ElmoArchive.exe`。
@@ -34,6 +34,21 @@ Darkwinter 用户也可选择网页商店登录方式。按软件提示操作，
 请保留软件文件夹。更新前关闭软件并备份 `ElmoBeacon.db`。不要公开数据库、连接配置、游戏日志或 `ca.key`（证书私钥）。软件会在证书设置中显示存放位置。
 
 若异常退出后无法联网，请在 Windows 的网络代理设置中检查是否仍指向 `127.0.0.1:8899`，并恢复原设置。更多信息见[详细说明（英文）](GUIDE.md#capture-privacy-and-troubleshooting)。
+
+## 截图
+
+副本花费、运气估算及导入步骤。
+
+<details>
+<summary>查看截图</summary>
+
+![副本花费及关联未命中结果](images/copy-costs.png)
+
+![与参考图表比较的运气估算](images/luck-comparison.png)
+
+![内置抓取与导入](images/import-records.png)
+
+</details>
 
 ## 查看统计
 

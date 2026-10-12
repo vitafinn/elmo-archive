@@ -209,7 +209,7 @@ export default {
     "import": "導入記錄",
     "help": "使用指南",
     "switchAccount": "切換賬號",
-    "intro": "連接游戲歷史記錄，并將記錄保存到這臺電腦。",
+    "intro": "在游戲內打開訪問記錄，再到這里導入。Elmo Archive 內置抓取功能，無需安裝 Fiddler 或獨立的 mitmproxy。",
     "client": "游戲客戶端",
     "overseas": "國際服 · Darkwinter / Haoplay",
     "identify": "選擇賬號",

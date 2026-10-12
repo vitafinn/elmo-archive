@@ -206,7 +206,7 @@ export default {
     "import": "Import records",
     "help": "How to use",
     "switchAccount": "Switch account",
-    "intro": "Connect to your game’s Access Record page, then import the records to this computer.",
+    "intro": "Open Access Record inside the game, then import here. Elmo Archive has built-in capture; no Fiddler or separate mitmproxy installation is needed.",
     "client": "Game client",
     "overseas": "Darkwinter / Haoplay",
     "identify": "Choose your account",
@@ -395,7 +395,7 @@ export default {
     },
     "records": {
       "title": "Pull Records",
-      "tip": "Record names are retrieved from the game client. Therefore, regardless of your language selection, the Chinese server will only display Simplified Chinese, while the international server cannot show Simplified Chinese (if you select Simplified Chinese, it will use Traditional Chinese as a substitute)."
+      "tip": "Item names come from installed game data and may differ from the interface language. If Simplified Chinese names are unavailable, the app uses Traditional Chinese."
     }
   },
   "sync": {

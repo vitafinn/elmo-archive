@@ -49,10 +49,10 @@ const selectedRecord = ref<handler.DisplayRecord|null>(null)
 
       <div class="section-heading">
         <span>{{ $t('gacha.records.title') }}</span>
-        <el-tooltip effect="light" :content="$t('gacha.records.tip')" placement="top">
-          <i-mdi-help class="text-sm"/>
+        <el-tooltip effect="dark" popper-class="records-help" :content="$t('gacha.records.tip')" placement="top">
+          <button class="record-help-button" :aria-label="$t('gacha.records.tip')">?</button>
           <template #content>
-            <div class="text-lg max-w-96">{{$t('gacha.records.tip')}}</div>
+            <div class="record-help-content">{{$t('gacha.records.tip')}}</div>
           </template>
         </el-tooltip>
       </div>

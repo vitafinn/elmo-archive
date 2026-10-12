@@ -167,3 +167,8 @@ input[type=radio],input[type=checkbox] {accent-color:var(--ui-action);}
 .capture-step {padding:14px;margin-bottom:12px;border:1px solid var(--ui-border);border-radius:10px;}
 .capture-step.is-complete {color:var(--ui-success);background:#183e34;}
 .capture-step.is-current {color:var(--ui-text);background:var(--ui-selected);border-color:var(--ui-action);}
+.el-popper.records-help {background:var(--ui-raised,#202b3a)!important;color:var(--ui-text,#edf2fa)!important;border:1px solid var(--ui-border,#52657d)!important;max-width:360px;padding:12px 16px}
+.el-popper.records-help .el-popper__arrow:before {background:var(--ui-raised,#202b3a)!important;border-color:var(--ui-border,#52657d)!important}
+.record-help-content {color:inherit;font-size:calc(14px * var(--text-scale,1));line-height:1.6;font-weight:400}
+.record-help-button {display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid var(--ui-border);border-radius:50%;color:var(--ui-action);background:var(--ui-input);font-size:16px;cursor:help}
+.record-help-button:focus-visible {outline:2px solid var(--ui-action);outline-offset:3px}

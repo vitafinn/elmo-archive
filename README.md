@@ -8,7 +8,7 @@ A Windows pull tracker for **Girls’ Frontline 2: Exilium**. View pity, doll an
 
 ## Install
 
-Requires **Windows x64**, the **Windows game client**, and [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). No separate proxy installation is needed.
+Requires **Windows x64**, the **Windows game client**, and [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). Open Access Record inside the game. Capture is built into Elmo Archive; no Fiddler or separate mitmproxy installation is needed.
 
 1. Download the **windows-x64.zip** from Releases. Do not choose “Source code.” If Releases is empty, no public build is available yet.
 2. Extract the ZIP to a folder you can write to. Run `ElmoArchive.exe`.
@@ -34,6 +34,21 @@ Capture temporarily uses a local HTTPS proxy and a trusted root certificate. Roo
 Keep your app folder. Before updating, close the app and back up `ElmoBeacon.db`. Do not share your database, session files, game logs, or `ca.key` (the certificate’s private signing key). The app shows the certificate folder during setup.
 
 [Certificate details and connection troubleshooting](docs/GUIDE.md#capture-privacy-and-troubleshooting)
+
+## Screenshots
+
+Copy costs, luck estimates, and the import steps.
+
+<details>
+<summary>View screenshots</summary>
+
+![Copy costs, including preceding losses](docs/images/copy-costs.png)
+
+![Estimated luck compared with the reference chart](docs/images/luck-comparison.png)
+
+![Built-in capture and import](docs/images/import-records.png)
+
+</details>
 
 ## Read your stats
 
