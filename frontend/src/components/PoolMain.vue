@@ -1,27 +1,53 @@
 <script setup lang="ts">
+import {ref} from 'vue';
+import {handler} from '../../wailsjs/go/models';
+import CharacterDetails from './CharacterDetails.vue';
 import {usePoolStore} from "../store/poolStore.ts";
 import PoolStatistic from "./PoolStatistic.vue";
 import PoolRecord from "./PoolRecord.vue";
+import SelectorStats from "./SelectorStats.vue";
+import OutfitStats from "./OutfitStats.vue";
+import {useUserStore} from '../store/userStore';
+import {useImportStore} from '../store/importStore';
 
 const poolStore = usePoolStore()
+const users = useUserStore()
+const flow = useImportStore()
+const selectedRecord = ref<handler.DisplayRecord|null>(null)
 
 </script>
 
 <template>
-  <div class="w-full px-2 flex flex-col gap-4">
-    <template v-if="poolStore.poolInfo">
-      <div class="flex flex-row flex-wrap gap-2">
-        <PoolStatistic class="text-cyan-400" :title="$t('gacha.statistic.totalCount')" :value="poolStore.poolInfo.totalCount"/>
-        <PoolStatistic class="text-lime-400" :title="$t('gacha.statistic.pityCount')" :value="poolStore.poolInfo.storedCount"/>
-        <PoolStatistic class="text-yellow-400" :title="$t('gacha.statistic.rank5Data')" :value="poolStore.poolInfo.rank5Count" :note="(poolStore.poolInfo.rank5Rate*100).toFixed(2)+'%'"/>
-        <PoolStatistic class="text-purple-400" :title="$t('gacha.statistic.rank4Data')" :value="poolStore.poolInfo.rank4Count" :note="(poolStore.poolInfo.rank4Rate*100).toFixed(2)+'%'"/>
-        <PoolStatistic class="text-blue-400" :title="$t('gacha.statistic.rank3Data')" :value="poolStore.poolInfo.rank3Count" :note="(poolStore.poolInfo.rank3Rate*100).toFixed(2)+'%'"/>
-        <PoolStatistic class="text-red-500" :title="$t('gacha.statistic.rank5Avg')" :value="poolStore.poolInfo.rank5Avg"/>
-        <PoolStatistic v-if="poolStore.poolType==3||poolStore.poolType==4" class="text-red-500" :title="$t('gacha.statistic.upRank5Avg')" :value="poolStore.poolInfo.rank5UpAvg"/>
-        <PoolStatistic v-if="poolStore.poolType==3||poolStore.poolType==4" class="text-red-500" :title="$t('gacha.statistic.nonUpRate')" :note="Math.round(poolStore.poolInfo.missingRate*1000) /10+'%'"/>
+  <div class="flex flex-col gap-6">
+    <section v-if="!users.userId" class="welcome-panel">
+      <p class="eyebrow">Elmo Archive · Girls’ Frontline 2: Exilium</p>
+      <h1>{{ $t('guide.welcome') }}</h1>
+      <p>{{ $t('guide.welcomeBody') }}</p>
+      <ol><li>{{ $t('guide.welcome1') }}</li><li>{{ $t('guide.welcome2') }}</li><li>{{ $t('guide.welcome3') }}</li></ol>
+      <el-button type="primary" @click="flow.visible = true">{{ $t('guide.firstImport') }}</el-button>
+    </section>
+    <header v-else class="page-heading">
+      <p class="eyebrow">{{ $t('dashboard.overview') }}</p>
+      <h1>{{ $te(`gacha.type.${poolStore.poolType}`) ? $t(`gacha.type.${poolStore.poolType}`) : $t('gacha.unknownType', {id: poolStore.poolType}) }}</h1>
+      <p class="text-sm text-slate-400">{{ $t('dashboard.allHistory') }}</p>
+    </header>
+    <OutfitStats v-if="poolStore.outfitInfo" :info="poolStore.outfitInfo"/>
+    <template v-else-if="poolStore.poolInfo">
+      <p v-if="!poolStore.poolInfo.totalCount" class="help-panel">{{ $t('guide.noRecords') }}</p>
+      <SelectorStats v-if="[6,7,-6,-7].includes(poolStore.poolType)" :info="poolStore.poolInfo" @select="selectedRecord=$event"/>
+      <template v-else>
+      <div class="stats-grid">
+        <PoolStatistic class="text-gray-50" :title="$t('gacha.statistic.totalCount')" :value="poolStore.poolInfo.totalCount"/>
+        <PoolStatistic class="text-orange-400" :title="$t('gacha.statistic.pityCount')" :value="poolStore.poolInfo.storedCount"/>
+        <PoolStatistic class="text-yellow-300" :title="$t('gacha.statistic.rank5Data')" :value="poolStore.poolInfo.rank5Count" :note="(poolStore.poolInfo.rank5Rate*100).toFixed(2)+'%'"/>
+        <PoolStatistic class="text-purple-500" :title="$t('gacha.statistic.rank4Data')" :value="poolStore.poolInfo.rank4Count" :note="(poolStore.poolInfo.rank4Rate*100).toFixed(2)+'%'"/>
+        <PoolStatistic class="text-blue-500" :title="$t('gacha.statistic.rank3Data')" :value="poolStore.poolInfo.rank3Count" :note="(poolStore.poolInfo.rank3Rate*100).toFixed(2)+'%'"/>
+        <PoolStatistic class="text-green-400" :title="$t('gacha.statistic.rank5Avg')" :value="poolStore.poolInfo.rank5Avg"/>
+        <PoolStatistic v-if="[3, 4, 6, 7, -6, -7].includes(poolStore.poolType)" class="text-pink-400" :title="$t('gacha.statistic.upRank5Avg')" :value="poolStore.poolInfo.rank5UpAvg"/>
+        <PoolStatistic v-if="[3, 4, 6, 7, -6, -7].includes(poolStore.poolType)" class="text-red-500" :title="$t('gacha.statistic.nonUpRate')" :note="Math.round(poolStore.poolInfo.missingRate*1000) /10+'%'"/>
       </div>
 
-      <div class="h-12 w-full bg-blue-500/20 shadow-md select-none text-white text-center rounded-md flex flex-row gap-2 justify-center items-center">
+      <div class="section-heading">
         <span>{{ $t('gacha.records.title') }}</span>
         <el-tooltip effect="light" :content="$t('gacha.records.tip')" placement="top">
           <i-mdi-help class="text-sm"/>
@@ -31,11 +57,20 @@ const poolStore = usePoolStore()
         </el-tooltip>
       </div>
 
+      <p class="text-sm text-slate-400">{{ $t('character.recordsHint') }}</p>
       <el-scrollbar>
-        <div class="w-full flex gap-x-2 gap-y-2 flex-wrap">
-          <PoolRecord v-for="record in poolStore.poolInfo.recordList" :name="record.Name" :count="record.Count" :timestamp="record.Timestamp" :is-missing="record.IsMissing"/>
+        <div class="record-grid">
+          <PoolRecord v-for="record in poolStore.poolInfo.recordList" :key="record.ID" :record="record" @select="selectedRecord=$event"/>
         </div>
       </el-scrollbar>
+      </template>
     </template>
+    <div v-else-if="users.userId" class="empty-state" role="status">
+      <template v-if="poolStore.loading">{{ $t('guide.loading') }}</template>
+      <template v-else>{{ $t(poolStore.loadError ? 'guide.loadFailed' : 'guide.noRecords') }}
+        <button class="text-link ml-2" @click="poolStore.updatePoolInfo()">{{ $t('guide.retry') }}</button>
+      </template>
+    </div>
+    <CharacterDetails :record="selectedRecord" @close="selectedRecord=null"/>
   </div>
 </template>

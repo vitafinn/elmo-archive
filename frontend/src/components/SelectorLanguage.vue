@@ -12,12 +12,12 @@ const langStore = useLangStore()
 </script>
 
 <template>
-  <el-dropdown>
-    <i-mdi-translate class="text-lg text-white mr-2"/>
+  <el-dropdown style="--wails-draggable:no-drag">
+    <button class="header-control" :aria-label="$t('appearance.language')">{{ langOptions.find(option=>option.value===langStore.lang)?.label || 'English' }} ⌄</button>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item v-for="lang in langOptions" @click="langStore.updateLang(lang.value)">
-          <span :class="lang.value==langStore.lang?'text-red-400':''">{{ lang.label }}</span>
+        <el-dropdown-item v-for="lang in langOptions" :key="lang.value" @click="langStore.updateLang(lang.value)">
+          <span>{{ lang.value===langStore.lang ? '✓ ' : '' }}{{ lang.label }}</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>

@@ -2,14 +2,16 @@
 import PoolMain from "./PoolMain.vue";
 import PoolRadio from "./PoolRadio.vue";
 
-const poolTypeList = [1, 3, 4, 5, 6, 7, 8]
+import {usePoolStore} from "../store/poolStore";
+const poolStore = usePoolStore()
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto flex flex-row px-4">
-    <div class="w-60 shrink-0 flex flex-col gap-2">
-      <PoolRadio v-for="poolType in poolTypeList" :poolType="poolType"/>
-    </div>
-    <PoolMain/>
+  <div class="dashboard-shell">
+    <nav class="pool-navigation" :aria-label="$t('dashboard.procurement')">
+      <p class="eyebrow">{{ $t('dashboard.procurement') }}</p>
+      <PoolRadio v-for="poolType in poolStore.poolTypes" :key="poolType" :poolType="poolType"/>
+    </nav>
+    <main class="dashboard-content"><PoolMain :key="poolStore.poolType"/></main>
   </div>
 </template>

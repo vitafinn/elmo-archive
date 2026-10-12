@@ -7,5 +7,5 @@ const handleWindowMaximise = async () => {
 </script>
 
 <template>
-  <i-mdi-crop-square class="hover:text-white/90 cursor-pointer" @click="handleWindowMaximise"/>
+  <button class="window-control" :aria-label="$t('appearance.maximize')" :title="$t('appearance.maximize')" @click="handleWindowMaximise"><i-mdi-crop-square/></button>
 </template>

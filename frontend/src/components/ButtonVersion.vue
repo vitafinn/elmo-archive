@@ -1,44 +1,14 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {GetLatestVersion, GetVersion, UpdateTo} from "../../wailsjs/go/handler/App";
-import {ElLoading, ElMessageBox} from "element-plus";
-import {NotifyError, NotifySuccess} from "../utils/notify.ts";
-import {useI18n} from "vue-i18n";
-
-const {t} = useI18n()
-const version = ref('dev')
-
-const checkUpdate = () => {
-  GetLatestVersion().then(latestVersion => {
-    if (latestVersion != version.value) {
-      ElMessageBox.confirm(t('version.update.notify'), latestVersion, {confirmButtonText: t('version.update.confirm'), cancelButtonText: t('version.update.cancel'), type: 'info',}).then(() => {
-        const loading = ElLoading.service({lock: true, text: `Update to ${latestVersion}...`, background: 'rgba(0, 0, 0, 0.7)'})
-        UpdateTo(latestVersion).catch(err => {
-          NotifyError('Error', err)
-        }).finally(() => {
-          loading.close()
-        })
-      })
-    } else {
-      NotifySuccess(latestVersion, t('version.update.latest'))
-    }
-  })
-}
-
-onMounted(async () => {
-  await GetVersion().then(res => {
-    if (res) {
-      version.value = res;
-    }
-  })
-  if (version.value != "dev") {
-    checkUpdate()
-  }
-})
+import {onMounted, ref} from 'vue'
+import {GetVersion} from '../../wailsjs/go/handler/App'
+import {BrowserOpenURL} from '../../wailsjs/runtime/runtime'
+const version=ref('dev')
+// Set by the release workflow from its actual owner/repository, not a personal handle.
+const repository=import.meta.env.VITE_REPOSITORY_URL || ''
+const releases=/^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9_.-]+\/?$/.test(repository) ? repository.replace(/\/$/,'')+'/releases' : ''
+onMounted(async()=>{version.value=await GetVersion() || 'dev'})
 </script>
-
 <template>
-  <el-tag class="ml-2 cursor-pointer" size="small" type="success" effect="light" @click="checkUpdate">
-    {{ version }}
-  </el-tag>
+ <button v-if="releases" class="text-link ml-2" @click="BrowserOpenURL(releases)">{{ version }} · GitHub Releases ↗</button>
+ <span v-else class="detail-note ml-2">{{ version }}</span>
 </template>

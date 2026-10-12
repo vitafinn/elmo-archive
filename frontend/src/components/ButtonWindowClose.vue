@@ -3,5 +3,5 @@ import {Quit} from "../../wailsjs/runtime";
 </script>
 
 <template>
-  <i-mdi-close class="hover:text-white/90 cursor-pointer" @click="Quit"/>
+  <button class="window-control close-control" :aria-label="$t('appearance.close')" :title="$t('appearance.close')" @click="Quit"><i-mdi-close/></button>
 </template>

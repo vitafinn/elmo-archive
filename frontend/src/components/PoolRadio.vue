@@ -10,7 +10,7 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div :class="['h-24 p-2 rounded-md text-lg select-none cursor-pointer transition-colors ease-in-out duration-500 flex flex-row items-center',poolStore.poolType===poolType?'text-yellow-500 bg-white/10':'text-white hover:text-blue-500 hover:bg-white/10']" @click="handleClick">
-    {{ $t(`gacha.type.${poolType}`) }}
-  </div>
+  <button type="button" class="pool-nav-item" :class="{'is-selected': poolStore.poolType===poolType}" :aria-current="poolStore.poolType===poolType ? 'page' : undefined" @click="handleClick">
+    {{ $te(`gacha.type.${poolType}`) ? $t(`gacha.type.${poolType}`) : $t('gacha.unknownType', {id: poolType}) }}
+  </button>
 </template>

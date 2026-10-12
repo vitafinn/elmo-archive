@@ -1,32 +1,20 @@
 <script setup lang="ts">
-const props = defineProps({
-  name: {type: String, required: true},
-  count: {type: Number, required: true},
-  timestamp: {type: Number, required: true},
-  isMissing: {type: Boolean, required: true},
-})
-
-
-const getBgColor = () => {
-  if (props.count < 50) {
-    return 'bg-cyan-400'
-  } else if (props.count < 60) {
-    return 'bg-lime-500'
-  } else if (props.count < 65) {
-    return 'bg-orange-500'
-  } else {
-    return 'bg-red-600'
-  }
-}
+import {useI18n} from 'vue-i18n'
+import {handler} from '../../wailsjs/go/models'
+import {outcomeKey,oddsFor} from '../utils/itemHistory'
+import PullTiming from './PullTiming.vue'
+const props=defineProps<{record:handler.DisplayRecord}>()
+const emit=defineEmits<{select:[record:handler.DisplayRecord]}>()
+const {t}=useI18n()
 </script>
-
 <template>
-  <div :class="['w-52 h-8 relative shadow-xl rounded-md shrink-0 select-none flex justify-center items-center text-white',getBgColor()]">
-    <el-tooltip effect="dark" :content="new Date(timestamp*1000).toLocaleString()" placement="top">
-      <div>{{ `${name}「${count}」` }}</div>
-    </el-tooltip>
-    <div v-if="isMissing" class="absolute right-1 w-7 h-7 rounded-full border-gray-500 border-2 flex items-center justify-center">
-      <span class="text-gray-500 -rotate-45 transform">歪</span>
-    </div>
-  </div>
+ <button type="button" class="pull-record" @click="emit('select',props.record)" :aria-label="t('character.open',{name:record.Name})">
+  <span class="record-topline"><strong class="record-name">{{ record.Name }}</strong><strong class="record-count">{{ record.Count }} <small>{{ t('character.pullsUnit') }}</small></strong></span>
+  <span class="record-date">{{ new Date(record.Timestamp*1000).toLocaleDateString($i18n.locale==='kr'?'ko':$i18n.locale) }}</span>
+  <PullTiming :pool-type="record.PoolType" :count="record.Count"/>
+  <span v-if="record.Outcome" class="outcome-pill" :class="`outcome-${record.Outcome}`">{{ t(outcomeKey(record.Outcome),{odds:oddsFor(record.PoolType)}) }}</span>
+  <span v-else-if="record.IsMissing && [3,4].includes(record.PoolType)" class="outcome-pill outcome-loss">{{ t(record.PoolType === 3 ? 'guide.lostDoll' : 'guide.lostWeapon') }}</span>
+  <span class="record-action">{{ t('character.view') }} <span aria-hidden="true">→</span></span>
+ </button>
 </template>
+

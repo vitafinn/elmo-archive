@@ -1,46 +1,51 @@
-<p>
-  <br/>
-  <a href="https://github.com/MatchaCabin/ElmoBeacon/blob/main/LICENSE">
-    <img alt="GitHub" src="https://img.shields.io/github/license/MatchaCabin/ElmoBeacon"/>
-  </a>
-  <a href="https://github.com/MatchaCabin/ElmoBeacon/issues">
-    <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg"/>
-  </a>
-  <a href="https://github.com/MatchaCabin/ElmoBeacon/actions/workflows/release.yml" rel="nofollow">
-    <img src="https://img.shields.io/github/actions/workflow/status/MatchaCabin/ElmoBeacon/release.yml"/>
-  </a>
-  <a href="https://github.com/MatchaCabin/ElmoBeacon/releases" rel="nofollow">
-    <img src="https://img.shields.io/github/v/release/MatchaCabin/ElmoBeacon"/>
-  </a>
-</p>
+# Elmo Archive — GFL2 pull tracker
 
-## Preview
-![image](preview.png)
+A Windows pull tracker for **Girls’ Frontline 2: Exilium**. View pity, doll and weapon copy costs, and outfit records.
 
-## Introduction
-<p><a href="https://github.com/MatchaCabin/ElmoBeacon" rel="nofollow">ElmoBeacon</a> is a tool for storing and analyzing GFL2 gacha records.</p>
-<p>The project is compatible with DarkWinter server(China,North America) and Haoplay server(Global,Asia,Japan,Korea).</p>
-<p>This is an open source project and maintained by <a href="https://gf2.mcc.wiki" rel="nofollow">MccWiki</a> and the community.</p>
-<p>The program has implemented the basic features. UI will be optimized later.</p>
-<p>If you have any ideas for UI, feel free to PR!</p>
+**A fork of [ElmoBeacon](https://github.com/MatchaCabin/ElmoBeacon), originally maintained by MccWiki and contributors.** This fork is independently maintained. It is not an official game tool.
 
-## Requirement
-- <a href="https://developer.microsoft.com/en-us/microsoft-edge/webview2" rel="nofollow">WebView2</a> (embedded)
-- GFL2 Client
-- Go 1.18+ (develop only)
-- <a href="https://wails.io/docs/gettingstarted/installation/" rel="nofollow">Wails</a> (develop only)
+[Download](https://github.com/vitafinn/elmo-archive/releases) · [Report a bug](https://github.com/vitafinn/elmo-archive/issues) · [中文说明](docs/README.zh-CN.md)
 
-## Getting Started
-1. Ensure that you have had a recent valid game login on this device.
-2. Switch to the record page in the left menu bar.
-3. Click incremental update or full update depending on your needs.
+## Install
 
-## Develop & Build
-1. clone the project to local
-2. run `wails dev` to dev,`wails build` to build
+Requires **Windows x64**, the **Windows game client**, and [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). No separate proxy installation is needed.
 
-## FAQ
+1. Download the **windows-x64.zip** from Releases. Do not choose “Source code.” If Releases is empty, no public build is available yet.
+2. Extract the ZIP to a folder you can write to. Run `ElmoArchive.exe`.
 
-- WIP
+This is an early preview. The executable is unsigned. Darkwinter and Haoplay (Global, Asia, Japan, Korea) import paths are included; regional testing is not complete. China-client imports are not supported.
 
-  WIP
+## Import records
+
+1. Open the game and sign in.
+2. In Elmo Archive, select **Import records → My game UID**. Enter the UID from your game profile.
+3. Select **Connect to game history**. If certificate setup appears, compare the displayed name and thumbprint with the Windows prompt. Select **Yes** only if they match and you trust this app. If the prompt is hidden, select **Show Windows prompt**.
+4. In the game, open a running banner → **Details → Access Record** side tab. If Access Record is already open, close and reopen it. No pull or purchase is needed.
+5. When the app says **History connected**, select **Sync records**. Check the UID and region, then confirm. Wait for **Sync complete**.
+
+Darkwinter users can also choose **Darkwinter webshop sign-in**. Follow the app’s steps and wait for **Webshop UID captured** before opening Access Record. Use the same account in the webshop and game; the app cannot verify that they match.
+
+**Next time:** select **Sync records**. Reconnect only if the connection has expired. Keep using the same UID and import method.
+
+## Certificate and saved data
+
+Capture temporarily uses a local HTTPS proxy and a trusted root certificate. Root trust is a real security permission; read the setup explanation before accepting it. **Remove after a successful import** is on by default. You can also remove trust from **Import records → Capture & certificate**. A valid saved connection can still sync without reinstalling it.
+
+Keep your app folder. Before updating, close the app and back up `ElmoBeacon.db`. Do not share your database, session files, game logs, or `ca.key` (the certificate’s private signing key). The app shows the certificate folder during setup.
+
+[Certificate details and connection troubleshooting](docs/GUIDE.md#capture-privacy-and-troubleshooting)
+
+## Read your stats
+
+- Custom and Reunion banners have separate pity counters that expire. Outfit records are grouped by season.
+- Select a result to see copies, preceding losses, and available doll/weapon costs, including V6R1 and V6R6.
+- Use **Edit target result** only when a label is wrong. Choose **Unknown** if you do not know.
+- Stats use imported history, not your live inventory. Luck values are estimates; missing records can affect them.
+
+## Maintenance and credits
+
+This fork focuses on bug fixes and game compatibility. No new features or regular release schedule are planned. English and Chinese interfaces are included.
+
+Original code and copyright notices are retained under [GPL v3](LICENSE). Release downloads include corresponding source. Chart: 一棵平衡树; English translation: DiggusDBickus. Game names and assets belong to their owners.
+
+[Build instructions](docs/GUIDE.md#develop-and-build) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)

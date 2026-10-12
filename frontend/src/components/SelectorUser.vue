@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import {useUserStore} from "../store/userStore.ts";
-
-const userStore =useUserStore()
-
+import {computed} from 'vue'
+import {useUserStore} from '../store/userStore'
+const userStore = useUserStore()
+const selected = computed(() => userStore.userList.find(user => user.id === userStore.userId))
 </script>
-
 <template>
-  <el-dropdown v-if="userStore.userId&&userStore.userList">
-    <i-mdi-person class="text-xl text-white mr-2"/>
-    <template #dropdown >
-      <el-dropdown-menu>
-        <el-dropdown-item v-for="user in userStore.userList" @click="userStore.updateUserId(user.id)">
-          <span :class="user.id==userStore.userId?'text-red-400':''">{{ $t(`server.${user.server}`)+` ${user.uid}` }}</span>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
+  <el-dropdown v-if="selected" style="--wails-draggable:no-drag">
+    <button class="account-button" :aria-label="$t('guide.switchAccount')">{{ $t(`server.${selected.server}`) }} · {{ selected.uid }} <span aria-hidden="true">⌄</span></button>
+    <template #dropdown><el-dropdown-menu>
+      <el-dropdown-item v-for="user in userStore.userList" :key="user.id" @click="userStore.updateUserId(user.id)">
+        <span>{{ user.id === userStore.userId ? '✓ ' : '' }}{{ $t(`server.${user.server}`) }} · {{ user.uid }}</span>
+      </el-dropdown-item>
+    </el-dropdown-menu></template>
   </el-dropdown>
 </template>

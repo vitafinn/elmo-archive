@@ -1,35 +1,42 @@
 package util
 
 import (
-	"bytes"
 	"encoding/binary"
+	"fmt"
 	"google.golang.org/protobuf/proto"
 	"os"
 	"path/filepath"
 	"reflect"
 )
 
-func GetTableData(gameDataDir string, gameServer string, payload proto.Message) error {
-	tableType := reflect.TypeOf(payload)
-	tablePath := filepath.Join(gameDataDir, "Table", gameServer, tableType.Elem().Name()+".bytes")
+func ReadTableData(gameDataDir, gameServer, tableName string) ([]byte, error) {
+	tablePath := filepath.Join(gameDataDir, "Table", tableName+".bytes")
+	data, err := os.ReadFile(tablePath)
+	if os.IsNotExist(err) && gameServer != "" {
+		tablePath = filepath.Join(gameDataDir, "Table", gameServer, tableName+".bytes")
+		data, err = os.ReadFile(tablePath)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return tablePayload(data)
+}
 
-	encryptedTableData, err := os.ReadFile(tablePath)
+func tablePayload(data []byte) ([]byte, error) {
+	if len(data) < 4 {
+		return nil, fmt.Errorf("table header is truncated")
+	}
+	offset := uint64(binary.LittleEndian.Uint32(data[:4])) + 4
+	if offset > uint64(len(data)) {
+		return nil, fmt.Errorf("table header exceeds file length")
+	}
+	return data[offset:], nil
+}
+
+func GetTableData(gameDataDir, gameServer string, payload proto.Message) error {
+	data, err := ReadTableData(gameDataDir, gameServer, reflect.TypeOf(payload).Elem().Name())
 	if err != nil {
 		return err
 	}
-
-	var head uint32
-	err = binary.Read(bytes.NewReader(encryptedTableData[:4]), binary.LittleEndian, &head)
-	if err != nil {
-		return err
-	}
-
-	tableData := encryptedTableData[head+4:]
-
-	err = proto.Unmarshal(tableData, payload)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return proto.Unmarshal(data, payload)
 }

@@ -1,20 +1,20 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "ElmoBeacon",
-  "outputfilename": "ElmoBeacon",
-  "frontend:install": "npm install",
+  "name": "Elmo Archive",
+  "outputfilename": "ElmoArchive",
+  "frontend:install": "npm ci",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Matcha",
-    "email": "admin@mcc.wiki"
+    "name": "Elmo Archive community",
+    "email": ""
   },
   "info": {
-    "companyName": "MccWiki",
-    "productName": "ElmoBeacon",
+    "companyName": "Elmo Archive community",
+    "productName": "Elmo Archive",
     "productVersion": "",
     "copyright": "Copyright (c) 2024 MccWiki",
-    "comments": "A tool for storing and analyzing GFL2 gacha records"
+    "comments": "Girls’ Frontline 2: Exilium pull tracker — community continuation"
   }
 }

@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// UserProvidedConfig struct to match gacha_session_info.json
 type UserProvidedConfig struct {
+	IdentitySource     string `json:"IdentitySource"`
 	FullGachaRecordUrl string `json:"FullGachaRecordUrl"`
 	AccessToken        string `json:"AccessToken"`
 	UidString          string `json:"UidString"`
@@ -20,7 +20,6 @@ type UserProvidedConfig struct {
 
 const CONFIG_FILE_NAME = "gacha_session_info.json"
 
-// loadUserConfig reads and parses the JSON configuration file.
 func loadUserConfig(configFilePath string) (*UserProvidedConfig, error) {
 	data, err := os.ReadFile(configFilePath)
 	if err != nil {
@@ -48,81 +47,39 @@ func loadUserConfig(configFilePath string) (*UserProvidedConfig, error) {
 	return &config, nil
 }
 
-func GetUserInfoCN() (*GameUserInfo, error) {
-	userHome, err := os.UserHomeDir()
-	if err != nil {
-		return nil, errors.New("Failed to get user home dir")
-	}
-
-	logDataBytes, err := os.ReadFile(filepath.Join(userHome, gameLogPathCN))
-	if err != nil {
-		return nil, errors.New("Failed to read game log file(CN)")
-	}
-
-	//extract GameDataDir
-	regexpGameDataDir, err := regexp.Compile(exprGameDataDir)
-	if err != nil {
-		return nil, errors.New("Failed to compile exprGameDataDir(CN)")
-	}
-	resultGameDataDir := regexpGameDataDir.FindSubmatch(logDataBytes)
-	if resultGameDataDir == nil {
-		return nil, errors.New("Failed to find game data directory(CN)")
-	}
-	gameDataDir := filepath.Join(string(resultGameDataDir[1]), "LocalCache/Data")
-
-	//extract GachaRecordUrl
-	regexpGachaRecordUrl, err := regexp.Compile(exprGachaRecordUrlCN)
-	if err != nil {
-		return nil, errors.New("Failed to compile exprGachaRecordUrl(CN)")
-	}
-	resultGachaRecordUrlList := regexpGachaRecordUrl.FindAllSubmatch(logDataBytes, -1)
-	if resultGachaRecordUrlList == nil {
-		return nil, errors.New("Failed to find gacha record url(CN)")
-	}
-	latestResultGachaRecordUrl := resultGachaRecordUrlList[len(resultGachaRecordUrlList)-1]
-	gachaRecordUrl := string(latestResultGachaRecordUrl[1])
-
-	//extract uid and accessToken
-	regexpLoginInfo, err := regexp.Compile(exprLoginInfoCN)
-	if err != nil {
-		return nil, errors.New("Failed to compile exprLoginInfo(CN)")
-	}
-	resultLoginInfoList := regexpLoginInfo.FindAllSubmatch(logDataBytes, -1)
-	if resultLoginInfoList == nil {
-		return nil, errors.New("Failed to find game login information(CN)")
-	}
-	latestResultLoginInfo := resultLoginInfoList[len(resultLoginInfoList)-1]
-	gameAccessToken := string(latestResultLoginInfo[1])
-	uid, err := strconv.ParseUint(string(latestResultLoginInfo[2]), 10, 64)
-	if err != nil {
-		return nil, errors.Errorf("Failed to parse uid:'%s'(CN)", latestResultLoginInfo[2])
-	}
-
-	return &GameUserInfo{
-		Uid:             uid,
-		GameServer:      GameServerCN,
-		GameDataDir:     gameDataDir,
-		GameAccessToken: gameAccessToken,
-		GachaRecordUrl:  gachaRecordUrl,
-	}, nil
-}
-
 func GetUserInfoOS() (*GameUserInfo, error) {
-	// Load Auth Info from JSON config file
-	exePath, errExe := os.Executable()
-	configFilePath := CONFIG_FILE_NAME // Default to current dir
-	if errExe != nil {
+	// --- 1. RAM INJECTION PROTOCOL ---
+	sessionMutex.Lock()
+	memConfig := ActiveSession
+	sessionMutex.Unlock()
 
+	var authConfig *UserProvidedConfig
+
+	if memConfig.FullGachaRecordUrl != "" && memConfig.AccessToken != "" && memConfig.UidString != "" {
+		authConfig = &UserProvidedConfig{
+			IdentitySource:     memConfig.IdentitySource,
+			FullGachaRecordUrl: memConfig.FullGachaRecordUrl,
+			AccessToken:        memConfig.AccessToken,
+			UidString:          memConfig.UidString,
+		}
 	} else {
-		configFilePath = filepath.Join(filepath.Dir(exePath), CONFIG_FILE_NAME)
+		// --- 2. ORIGINAL JSON FALLBACK ---
+		exePath, errExe := os.Executable()
+		configFilePath := CONFIG_FILE_NAME
+		if errExe != nil {
+
+		} else {
+			configFilePath = filepath.Join(filepath.Dir(exePath), CONFIG_FILE_NAME)
+		}
+
+		var errConfig error
+		authConfig, errConfig = loadUserConfig(configFilePath)
+		if errConfig != nil {
+			// Silently fail to trigger the final Player.log fallback
+		}
 	}
 
-	authConfig, errConfig := loadUserConfig(configFilePath)
-	/* 	if errConfig != nil {
-		fmt.Printf("DEBUG: loadUserConfig for '%s' failed: %v\n", configFilePath, errConfig)
-	} */
-	if errConfig == nil && authConfig != nil {
-		// User config loaded successfully
+	if authConfig != nil {
 		uid, parseErr := strconv.ParseUint(authConfig.UidString, 10, 64)
 		if parseErr != nil {
 			return nil, errors.Wrapf(parseErr, "Failed to parse UidString '%s' from JSON config (OS)", authConfig.UidString)
@@ -147,7 +104,7 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 			return nil, errors.Errorf("Failed to determine a valid Oversea server from JSON config URL: %s", gachaRecordUrlFromConfig)
 		}
 
-		// GameDataDir extraction logic (this is still available in Player.log)
+		// --- 3. THE ORIGINAL GAME DIRECTORY EXTRACTION ---
 		var gameDataDir string
 		userHome, homeErr := os.UserHomeDir()
 		if homeErr != nil {
@@ -159,7 +116,7 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 			} else {
 				regexpGameDataDir, compErrGD := regexp.Compile(exprGameDataDir)
 				if compErrGD != nil {
-					return nil, errors.New("Internal error: Failed to compile exprGameDataDir for GameDataDir") // Should ideally not happen
+					return nil, errors.New("Internal error: Failed to compile exprGameDataDir for GameDataDir")
 				} else {
 					resultGameDataDir := regexpGameDataDir.FindSubmatch(logDataBytes)
 					if resultGameDataDir == nil {
@@ -172,6 +129,7 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 		}
 
 		userInfo := &GameUserInfo{
+			IdentitySource:  authConfig.IdentitySource,
 			Uid:             uid,
 			GameServer:      server,
 			GameDataDir:     gameDataDir,
@@ -181,7 +139,6 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 		return userInfo, nil
 	}
 
-	// Fallback: Use original Player.log parsing method since it still works for Haoplay
 	userHome, homeErr := os.UserHomeDir()
 	if homeErr != nil {
 		return nil, errors.New("Failed to get user home dir")
@@ -192,7 +149,6 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 		return nil, errors.New("Failed to read game log file(Oversea)")
 	}
 
-	//extract GameDataDir
 	regexpGameDataDir, err := regexp.Compile(exprGameDataDir)
 	if err != nil {
 		return nil, errors.New("Failed to compile exprGameDataDir(Oversea)")
@@ -203,7 +159,6 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 	}
 	gameDataDir := filepath.Join(string(resultGameDataDir[1]), "LocalCache/Data")
 
-	//extract GachaRecordUrl
 	regexpGachaRecordUrl, err := regexp.Compile(exprGachaRecordUrlOversea)
 	if err != nil {
 		return nil, errors.New("Failed to compile exprGachaRecordUrl(Oversea)")
@@ -215,7 +170,6 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 	latestResultGachaRecordUrl := resultGachaRecordUrlList[len(resultGachaRecordUrlList)-1]
 	gachaRecordUrl := string(latestResultGachaRecordUrl[1])
 
-	//extract uid and accessToken
 	regexpLoginInfo, err := regexp.Compile(exprLoginInfoOversea)
 	if err != nil {
 		return nil, errors.New("Failed to compile exprLoginInfo(Oversea)")
@@ -231,7 +185,6 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 		return nil, errors.Errorf("Failed to parse uid:'%s'(Oversea)", latestResultLoginInfo[1])
 	}
 
-	//determine the server
 	var server gameServer
 	switch {
 	case strings.Contains(gachaRecordUrl, "gf2-gacha-record-us"):
@@ -249,6 +202,7 @@ func GetUserInfoOS() (*GameUserInfo, error) {
 	}
 
 	return &GameUserInfo{
+		IdentitySource:  "gameLog",
 		Uid:             uid,
 		GameServer:      server,
 		GameDataDir:     gameDataDir,

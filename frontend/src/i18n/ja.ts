@@ -1,23 +1,28 @@
 export default {
     window: {
-        title: 'ElmoBeacon'
+        title: "Elmo Archive"
     },
     server:{
         cn:'China',
-        us:'America',
-        intl:'Global',
-        jp:'Japan',
-        kr:'Korea',
-        tw:'Asia'
+        us:'Darkwinter',
+        intl:'Haoplay · Global',
+        jp:'Haoplay · Japan',
+        kr:'Haoplay · Korea',
+        tw:'Haoplay · Asia'
     },
     gacha:{
+        unknownType: '調達 #{id}',
         type:{
+            9: '衣装調達',
+            10: 'その他の衣装調達',
+            '-6': '再会調達・人形',
+            '-7': '再会調達・武器',
             1:'常駐訪問',
             3:'限定訪問',
             4:'軍備拡張',
             5:'スタートダッシュ訪問',
-            6:'選択訪問・人形',
-            7:'選択訪問・装備',
+            6: '選択調達・人形',
+            7: '選択調達・武器',
             8:'ミステリーボックス'
         },
         statistic:{
@@ -51,5 +56,15 @@ export default {
                 os: 'Synchronization Error(OS)'
             }
         }
+    },
+    theme: {
+        change: "テーマを変更",
+        custom: "カスタムテーマ",
+        from: "開始色",
+        to: "終了色",
+        preview: "プレビュー",
+        popular: "人気グラデーション",
+        apply: "適用",
+        cancel: "キャンセル"
     }
 }

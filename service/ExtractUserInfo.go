@@ -35,6 +35,7 @@ const (
 )
 
 type GameUserInfo struct {
+	IdentitySource  string
 	Uid             uint64
 	GameServer      gameServer
 	GameDataDir     string

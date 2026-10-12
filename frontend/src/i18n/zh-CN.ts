@@ -1,17 +1,24 @@
+import extra from './zh-CN-extra'
 export default {
+    ...extra,
     window: {
-        title: '艾莫信标'
+        title: "Elmo Archive"
     },
     server: {
         cn: '国服',
-        us: '美服',
-        intl: '全球服',
-        jp: '日服',
-        kr: '韩服',
-        tw: '亚服'
+        us:'Darkwinter',
+        intl:'Haoplay · 全球服',
+        jp:'Haoplay · 日服',
+        kr:'Haoplay · 韩服',
+        tw:'Haoplay · 亚服'
     },
     gacha: {
+        unknownType: '采购 #{id}',
         type: {
+            9: '外观采购',
+            10: '其他外观采购',
+            '-6': '重逢采购·人形',
+            '-7': '重逢采购·武器',
             1: '常规采购',
             3: '定向采购',
             4: '军备提升',
@@ -60,5 +67,15 @@ export default {
             confirm: '是',
             cancel: '否'
         },
+    },
+    theme: {
+        change: "更改主题",
+        custom: "自定义主题",
+        from: "起始颜色",
+        to: "结束颜色",
+        preview: "预览效果",
+        popular: "流行渐变",
+        apply: "应用",
+        cancel: "取消"
     }
 }

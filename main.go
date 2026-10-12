@@ -4,6 +4,8 @@ import (
 	"ElmoBeacon/db"
 	"ElmoBeacon/handler"
 	"ElmoBeacon/logger"
+	"ElmoBeacon/service"
+	"context"
 	"embed"
 	"github.com/rs/zerolog/log"
 	"github.com/wailsapp/wails/v2"
@@ -29,7 +31,7 @@ func main() {
 
 	// Create application with options
 	err = wails.Run(&options.App{
-		Title:     "ElmoBeacon",
+		Title:     "Elmo Archive",
 		Width:     1600,
 		Height:    900,
 		Frameless: true,
@@ -39,6 +41,11 @@ func main() {
 			Assets: assets,
 		},
 		OnStartup: app.Startup,
+		OnShutdown: func(ctx context.Context) {
+			if err := service.StopCapture(); err != nil {
+				log.Error().Err(err).Msg("Could not restore proxy settings on exit")
+			}
+		},
 		Bind: []interface{}{
 			app,
 		},

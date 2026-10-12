@@ -3,5 +3,5 @@ import {WindowMinimise} from "../../wailsjs/runtime";
 </script>
 
 <template>
-  <i-mdi-minus class="hover:text-white/90 cursor-pointer" @click="WindowMinimise"/>
+  <button class="window-control" :aria-label="$t('appearance.minimize')" :title="$t('appearance.minimize')" @click="WindowMinimise"><i-mdi-minus/></button>
 </template>

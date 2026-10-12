@@ -2,12 +2,13 @@ package request
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 type GachaResponseBody struct {
@@ -26,6 +27,12 @@ type GachaRecordListData struct {
 }
 
 func FetchGachaRecordList(gachaUrl, accessToken, next string, poolType int64) (data GachaRecordListData, err error) {
+	// PROTOCOL ENFORCEMENT: Upgrade HTTP to HTTPS to prevent 301 redirects
+	// from dropping the POST body and causing 404 errors.
+	if strings.HasPrefix(gachaUrl, "http://") {
+		gachaUrl = strings.Replace(gachaUrl, "http://", "https://", 1)
+	}
+
 	values := url.Values{}
 	if next != "" {
 		values.Set("next", next)
@@ -53,6 +60,10 @@ func FetchGachaRecordList(gachaUrl, accessToken, next string, poolType int64) (d
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return GachaRecordListData{}, err
+	}
+
+	if len(bodyBytes) > 0 && bodyBytes[0] != '{' {
+		return GachaRecordListData{}, errors.Errorf("Server rejected request (expected JSON): %s", string(bodyBytes))
 	}
 
 	var body GachaResponseBody

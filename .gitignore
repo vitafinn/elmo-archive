@@ -8,6 +8,27 @@ proto
 
 *.db
 *.log
-*_test.go
 
-package-lock.json
+
+
+# Local account data and credentials
+*.db-*
+*.sqlite*
+*.log.*
+*Player.log*
+gacha_session_info.json
+gacha_auth_details.json
+ca.crt
+ca.key
+*.pem
+*.pfx
+.env
+.env.*
+__pycache__/
+build/db_export/
+build/wails-cached.exe
+build/release/
+ElmoBeacon/
+save_gacha_info - Copy.py
+build/privacy-preview/
+build/publish/

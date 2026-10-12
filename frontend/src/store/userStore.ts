@@ -35,8 +35,8 @@ export const useUserStore = defineStore('user', () => {
         await GetUserList().then((res) => {
             if (res) {
                 userList.value = res;
-                if (!userId.value) {
-                    userId.value = userList.value[0].id;
+                if (!userList.value.some(user => user.id === userId.value)) {
+                    userId.value = userList.value[0]?.id;
                 }
             }
         }).catch(err => {

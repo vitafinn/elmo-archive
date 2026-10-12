@@ -1,23 +1,28 @@
 export default {
     window: {
-        title: 'ElmoBeacon'
+        title: "Elmo Archive"
     },
     server:{
         cn:'China',
-        us:'America',
-        intl:'Global',
-        jp:'Japan',
-        kr:'Korea',
-        tw:'Asia'
+        us:'Darkwinter',
+        intl:'Haoplay · Global',
+        jp:'Haoplay · Japan',
+        kr:'Haoplay · Korea',
+        tw:'Haoplay · Asia'
     },
     gacha:{
+        unknownType: '발주 #{id}',
         type:{
+            9: '의상 발주',
+            10: '기타 의상 발주',
+            '-6': '재회 발주·인형',
+            '-7': '재회 발주·군비',
             1:'일반 발주',
             3:'지정 발주',
             4:'군비 강화',
             5:'시작 발주',
-            6:'선택 발주·인형',
-            7:'선택 발주·군비',
+            6: '선택 발주·인형',
+            7: '선택 발주·군비',
             8:'미스터리 박스'
         },
         statistic:{
