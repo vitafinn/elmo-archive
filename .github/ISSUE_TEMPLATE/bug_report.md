@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a problem with the preview
+about: Report a problem with the release
 ---
 
 ## What happened?
@@ -20,5 +20,5 @@ about: Report a problem with the preview
 Include sanitized progress stages or a screenshot with the UID hidden.
 Do not attach databases, raw game logs, tokens, capture URLs, session JSON, or certificate private keys.
 
-## Reproducible with the newest preview?
+## Reproducible with the newest release?
 

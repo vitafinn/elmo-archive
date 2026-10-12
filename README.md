@@ -2,18 +2,22 @@
 
 A Windows pull tracker for **Girls’ Frontline 2: Exilium**. View pity, doll and weapon copy costs, and outfit records.
 
-**A fork of [ElmoBeacon](https://github.com/MatchaCabin/ElmoBeacon), originally maintained by MccWiki and contributors.** This fork is independently maintained. It is not an official game tool.
+A fork of [ElmoBeacon](https://github.com/MatchaCabin/ElmoBeacon).
 
 [Download](https://github.com/vitafinn/elmo-archive/releases) · [Report a bug](https://github.com/vitafinn/elmo-archive/issues) · [中文说明](docs/README.zh-CN.md)
 
+![Procurement overview with pity and pull history](docs/images/overview.png)
+
 ## Install
 
-Requires **Windows x64**, the **Windows game client**, and [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). Open Access Record inside the game. Capture is built into Elmo Archive; no Fiddler or separate mitmproxy installation is needed.
+Requires **Windows x64** and the **Windows game client**. Open Access Record inside the game. Capture is built into Elmo Archive; no Fiddler or separate mitmproxy installation is needed.
 
 1. Download the **windows-x64.zip** from Releases. Do not choose “Source code.” If Releases is empty, no public build is available yet.
 2. Extract the ZIP to a folder you can write to. Run `ElmoArchive.exe`.
 
-This is an early preview. The executable is unsigned. Darkwinter and Haoplay (Global, Asia, Japan, Korea) import paths are included; regional testing is not complete. China-client imports are not supported.
+If WebView2 is missing, the app offers to download and run Microsoft's installer. It needs an internet connection. [Manual download](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) is only a fallback.
+
+The executable is unsigned. Darkwinter and Haoplay (Global, Asia, Japan, Korea) import paths are included; regional testing is not complete. China-client imports are not supported.
 
 ## Import records
 
@@ -63,4 +67,4 @@ This fork focuses on bug fixes and game compatibility. No new features or regula
 
 Original code and copyright notices are retained under [GPL v3](LICENSE). Release downloads include corresponding source. Chart: 一棵平衡树; English translation: DiggusDBickus. Game names and assets belong to their owners.
 
-[Build instructions](docs/GUIDE.md#develop-and-build) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[Build instructions](docs/GUIDE.md#develop-and-build) · [Security](SECURITY.md)

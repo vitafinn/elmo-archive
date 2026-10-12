@@ -1,11 +1,11 @@
-name: Preview release
+name: Release
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version, for example 0.2.0-preview.12'
+        description: 'Version, for example 0.2.0'
         required: true
-        default: '0.2.0-preview.12'
+        default: '0.2.0'
 permissions:
   contents: read
 jobs:
@@ -51,18 +51,18 @@ jobs:
         run: ./scripts/package-release.ps1 -Version $env:RELEASE_VERSION
       - uses: actions/upload-artifact@v4
         with:
-          name: preview-release
+          name: release
           path: |
             build/release/**/*.zip
             build/release/**/SHA256SUMS.txt
-      - name: Create draft pre-release for review
+      - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ inputs.version }}
           target_commitish: ${{ github.sha }}
           name: Elmo Archive ${{ inputs.version }}
           draft: true
-          prerelease: true
+          prerelease: false
           body_path: docs/RELEASE_NOTES.md
           files: |
             build/release/**/*.zip

@@ -7,14 +7,14 @@
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Elmo Archive community",
+    "name": "vitafinn",
     "email": ""
   },
   "info": {
-    "companyName": "Elmo Archive community",
+    "companyName": "vitafinn",
     "productName": "Elmo Archive",
     "productVersion": "",
     "copyright": "Copyright (c) 2024 MccWiki",
-    "comments": "Girls’ Frontline 2: Exilium pull tracker — community continuation"
+    "comments": "Girls’ Frontline 2: Exilium pull tracker — independently maintained fork"
   }
 }

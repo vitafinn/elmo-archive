@@ -1,4 +1,4 @@
-# Elmo Archive preview
+# Elmo Archive 0.2.0
 
 A Windows pull tracker for Girls’ Frontline 2: Exilium, forked from [MatchaCabin/ElmoBeacon](https://github.com/MatchaCabin/ElmoBeacon).
 
@@ -20,11 +20,11 @@ Certificate trust is removed after a successful import by default. Manual remova
 
 ## Install
 
-Download the **windows-x64.zip**, extract it to a writable folder, and run `ElmoArchive.exe`. Requires the Windows game client and WebView2 Runtime. Binaries are unsigned. This preview does not replace itself through the upstream updater.
+Download the **windows-x64.zip**, extract it to a writable folder, and run `ElmoArchive.exe`. Requires the Windows game client. If WebView2 is missing, the app offers to download and run Microsoft’s installer. Binaries are unsigned. Updates are available from this repository’s Releases page.
 
 Back up `ElmoBeacon.db` while the app is closed before upgrading. Do not include your database, capture files, certificates, or game logs in public reports.
 
-## Preview status
+## Known limitations
 
 Live capture needs region-by-region confirmation. Unknown target outcomes and missing history can affect costs; probability comparisons remain estimates. Imported history is not live inventory. See README for capture/proxy behavior and limitations.
 

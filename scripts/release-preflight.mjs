@@ -3,7 +3,7 @@ import path from 'node:path'
 import {execFileSync} from 'node:child_process'
 const root=process.cwd()
 const candidates=[...new Set(execFileSync('git',['ls-files','--cached','--others','--exclude-standard','-z'],{encoding:'utf8'}).split('\0').filter(Boolean))]
-const allowed=/^(?:\.github\/|docs\/|scripts\/|db\/|handler\/|logger\/|logic\/|model\/|pb\/|request\/|service\/|util\/|frontend\/(?:src\/|tests\/|public\/|wailsjs\/|[^/]+$)|build\/(?:appicon\.png|windows\/)|(?:\.gitignore|LICENSE|README\.md|CONTRIBUTING\.md|SECURITY\.md|POOL_SUPPORT\.md|go\.mod|go\.sum|main\.go|wails\.json)$)/
+const allowed=/^(?:\.github\/|docs\/|scripts\/|db\/|handler\/|logger\/|logic\/|model\/|pb\/|request\/|service\/|util\/|frontend\/(?:src\/|tests\/|public\/|wailsjs\/|[^/]+$)|build\/(?:appicon\.png|windows\/)|(?:\.gitignore|LICENSE|README\.md|SECURITY\.md|POOL_SUPPORT\.md|go\.mod|go\.sum|main\.go|wails\.json)$)/
 const forbidden=/(?:^|\/)(?:node_modules|dist|db_export|__pycache__)(?:\/|$)|(?:\.db(?:-|$)|\.log(?:\.|$)|\.key$|\.crt$|\.pem$|\.pfx$|\.exe$|\.zip$|gacha_(?:auth_details|session_info)\.json$)/i
 const files=candidates.filter(file=>allowed.test(file)&&fs.existsSync(file))
 // Reject private files even when they are outside the export allowlist.
