@@ -20,6 +20,7 @@ const error = ref('')
 const invalidUid = ref(false)
 const certificate=ref<util.CaptureCertificate|null>(null)
 const checkingCertificate=ref(false), installingCertificate=ref(false)
+const setCleanup=(event:Event)=>security.setRemoveAfterImport((event.target as HTMLInputElement).checked)
 let unsubscribe: (()=>void) | undefined
 const cleanup = () => { unsubscribe?.(); unsubscribe = undefined }
 const stop = async () => {
@@ -87,23 +88,28 @@ onBeforeUnmount(cleanup)
             <p v-if="invalidUid" role="alert" class="text-red-300">{{ $t('guide.uidInvalid') }}</p>
           </template>
           <p v-else>{{ $t('guide.webshopHelp') }}</p>
-          <p class="text-amber-200">{{ $t('guide.sameMethod') }}</p>
-          <details><summary>{{ $t('guide.connectionDetails') }}</summary><p class="mt-2">{{ $t('guide.connectionNote') }}</p></details>
           <el-button type="primary" :loading="starting || checkingCertificate" :disabled="flow.busy || flow.preparing || flow.confirming || security.busy" @click="start">{{ $t('guide.connect') }}</el-button>
+          <details><summary>{{ $t('guide.connectionDetails') }}</summary><p class="mt-2">{{ $t('guide.connectionNote') }}</p><p>{{ $t('guide.sameMethod') }}</p></details>
         </section>
         <section v-if="certificate" class="guide-step certificate-review" aria-live="polite">
           <h3>{{ $t('certificate.title') }}</h3>
           <p>{{ $t('certificate.purpose') }}</p>
-          <div class="certificate-identity"><strong>{{ certificate.Name }}</strong><span>{{ $t('certificate.thumbprint') }}</span><code>{{ certificate.Thumbprint }}</code></div>
-          <p>{{ $t('certificate.files') }}<br><code class="certificate-path">{{ certificate.Directory }}</code></p>
-          <p v-if="certificate.Legacy" class="detail-note">{{ $t('certificate.legacy') }}</p>
-          <div class="certificate-explanation"><p>{{ $t('certificate.warning') }}</p><p>{{ $t('certificate.compare') }}</p></div>
-          <details><summary>{{ $t('certificate.removalTitle') }}</summary><p>{{ $t('certificate.removal') }}</p></details>
+          <p class="certificate-permission">{{ $t('certificate.permission') }}</p>
+          <div class="certificate-identity"><span>{{ $t('certificate.expectedName') }}</span><strong>{{ certificate.Name }}</strong></div>
+          <label class="cleanup-choice"><input type="checkbox" :checked="security.removeAfterImport" :disabled="installingCertificate" @change="setCleanup"><span>{{ $t('captureSecurity.autoRemove') }}</span></label>
           <template v-if="installingCertificate">
             <p role="status"><strong>{{ $t('certificate.waiting') }}</strong></p><p>{{ $t('certificate.hidden') }}</p>
             <button class="action-button" @click="FocusCertificatePrompt()">{{ $t('certificate.showPrompt') }}</button>
           </template>
           <div v-else class="certificate-actions"><el-button type="primary" @click="installCertificate">{{ $t('certificate.install') }}</el-button><button class="action-button" @click="certificate=null;error=''">{{ $t('character.cancel') }}</button></div>
+          <details class="certificate-more"><summary>{{ $t('certificate.detailsTitle') }}</summary>
+            <p>{{ $t('certificate.warning') }}</p>
+            <div class="certificate-identity"><span>{{ $t('certificate.thumbprint') }}</span><code>{{ certificate.Thumbprint }}</code></div>
+            <p>{{ $t('certificate.compare') }}</p>
+            <p v-if="certificate.Legacy">{{ $t('certificate.legacy') }}</p>
+            <p>{{ $t('certificate.files') }}<br><code class="certificate-path">{{ certificate.Directory }}</code></p>
+            <p>{{ $t('certificate.removal') }}</p>
+          </details>
         </section>
         <section v-if="active || starting" class="guide-step" aria-live="polite">
           <template v-if="mode==='webshop'">
@@ -122,7 +128,7 @@ onBeforeUnmount(cleanup)
           <button class="text-link" :disabled="flow.busy" @click="flow.captured = false">{{ $t('guide.reconnect') }}</button>
         </section>
       </div>
-      <CaptureSecurity :locked="flow.busy || checkingCertificate || installingCertificate || starting || stopping" @removed="active=false;certificate=null;cleanup()"/>
+      <CaptureSecurity v-if="!certificate" :locked="flow.busy || checkingCertificate || installingCertificate || starting || stopping" @removed="active=false;certificate=null;cleanup()"/>
       <ImportLog/>
       <section v-if="error || flow.error" class="guide-error" role="alert">
         <strong>{{ $t('guide.failed') }}</strong><p>{{ $t('guide.recovery') }}</p>
@@ -136,6 +142,11 @@ onBeforeUnmount(cleanup)
 .certificate-identity {display:grid;gap:8px;padding:16px;margin:14px 0;background:var(--ui-input);border:1px solid var(--ui-border);border-radius:8px}
 .certificate-identity span {color:var(--ui-muted)}
 .certificate-identity code {font-size:calc(16px * var(--text-scale));font-variant-numeric:tabular-nums;overflow-wrap:anywhere;user-select:text;color:var(--ui-text)}
-.certificate-explanation {padding:4px 14px;border-left:3px solid var(--ui-warning);background:var(--ui-input);margin:12px 0}
+.certificate-permission {color:var(--ui-muted)}
+.cleanup-choice {display:flex;align-items:flex-start;gap:10px;cursor:pointer;line-height:1.5}
+.cleanup-choice input {margin-top:5px;width:18px;height:18px;accent-color:var(--ui-action);flex:none}
+.certificate-more {margin-top:22px;border-top:1px solid var(--ui-border);padding-top:12px;color:var(--ui-muted)}
+.certificate-more summary {color:var(--ui-action);cursor:pointer}
+.certificate-more p {margin-top:12px}
 .certificate-actions {display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 </style>

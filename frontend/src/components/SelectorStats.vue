@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import {computed} from 'vue'
+import {computed,ref} from 'vue'
+import RecordSearch from './RecordSearch.vue'
+import {matchesRecord} from '../utils/recordSearch'
 import {useI18n} from 'vue-i18n'
 import {handler} from '../../wailsjs/go/models'
 import PoolStatistic from './PoolStatistic.vue'
@@ -7,9 +9,12 @@ import PoolRecord from './PoolRecord.vue'
 const props = defineProps<{info: handler.PoolInfo}>()
 const {t,locale} = useI18n()
 const emit = defineEmits<{select:[record:handler.DisplayRecord]}>()
+const query = ref('')
+const matchingRecords = computed(() => (props.info.recordList || []).filter(record=>matchesRecord(query.value,record.Name,record.SearchNames)))
+const matchingBanners = computed(() => (props.info.bannerPeriods || []).filter(banner=>!query.value.trim() || recordsByBanner.value.has(banner.id)))
 const recordsByBanner = computed(() => {
   const groups = new Map<number, handler.DisplayRecord[]>()
-  for (const record of props.info.recordList || []) {
+  for (const record of matchingRecords.value) {
     const rows = groups.get(record.BannerID) || []
     rows.push(record); groups.set(record.BannerID, rows)
   }
@@ -45,7 +50,9 @@ const winRate = (wins: number, attempts: number) => attempts ? `${(100*wins/atte
       <h2>{{ t('dashboard.bannerHistory') }}</h2>
 
     </div>
-    <section v-for="banner in info.bannerPeriods" :key="banner.id" class="history-panel">
+    <RecordSearch v-model="query" :count="matchingRecords.length"/>
+    <p v-if="query && !matchingRecords.length" class="empty-state">{{ t('dashboard.noMatches') }}</p>
+    <section v-for="banner in matchingBanners" :key="banner.id" class="history-panel">
       <header class="flex flex-wrap justify-between gap-2">
         <div><strong>{{ banner.name || t('selector.banner', {id: banner.id}) }}</strong><p v-if="banner.name" class="detail-note">{{ t('selector.banner', {id: banner.id}) }} · {{ t('luck.gameName') }}</p></div>
         <span class="status-badge" :class="banner.status === 'active' ? 'text-green-300' : 'text-gray-300'">{{ t(`selector.status.${banner.status}`) }}</span>
@@ -61,7 +68,7 @@ const winRate = (wins: number, attempts: number) => attempts ? `${(100*wins/atte
         <div><dt class="text-gray-400">{{ t('selector.winRate') }}</dt><dd>{{ winRate(banner.targetWins, banner.targetAttempts) }}</dd></div>
       </dl>
       <p class="text-xs text-gray-400">{{ t('selector.lastRecorded') }}: {{ date(banner.lastTimestamp) }}. {{ t('selector.syncNote') }}</p>
-      <details :open="banner.status === 'active'">
+      <details :open="!!query.trim() || banner.status === 'active'">
         <summary class="cursor-pointer mb-3">{{ t('gacha.records.title') }}</summary>
         <aside class="result-review-note"><strong>{{ t('character.reviewTitle') }}</strong><p>{{ t('character.reviewIntro') }}</p></aside>
         <div class="record-grid">

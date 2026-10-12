@@ -3,6 +3,7 @@ import {reactive} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {handler} from '../../wailsjs/go/models'
 import PoolStatistic from './PoolStatistic.vue'
+import {matchesRecord} from '../utils/recordSearch'
 const props = defineProps<{info: handler.OutfitInfo}>()
 const {t,locale} = useI18n()
 const limits = reactive<Record<number,number>>({})
@@ -10,7 +11,7 @@ const searches = reactive<Record<number,string>>({})
 const categories = reactive<Record<number,string>>({})
 const filtered = (season: handler.OutfitSeason) => season.records.filter(record =>
   (!categories[season.id] || record.category === categories[season.id]) &&
-  record.name.toLocaleLowerCase().includes((searches[season.id] || '').trim().toLocaleLowerCase()))
+  matchesRecord(searches[season.id] || '',record.name,record.searchNames))
 const resetLimit = (id: number) => { limits[id] = 50 }
 const date = (value:number) => value ? new Date(value*1000).toLocaleString(locale.value==='kr'?'ko':locale.value) : t('selector.unknownDate')
 const colors:Record<string,string> = {limited:'text-yellow-300',rare:'text-purple-300',normal:'text-gray-100',unknown:'text-gray-400'}
@@ -38,7 +39,7 @@ const colors:Record<string,string> = {limited:'text-yellow-300',rare:'text-purpl
       <details :open="season.totalCount>0">
         <summary class="cursor-pointer">{{ t('outfit.records') }} ({{ season.totalCount }})</summary>
         <div class="record-filters">
-          <input v-model="searches[season.id]" type="search" :aria-label="t('dashboard.search')" :placeholder="t('dashboard.search')" @input="resetLimit(season.id)">
+          <input v-model="searches[season.id]" type="search" :aria-label="t('recordSearch.label')" :placeholder="t('recordSearch.placeholder')" @input="resetLimit(season.id)">
           <select v-model="categories[season.id]" :aria-label="t('outfit.category')" @change="resetLimit(season.id)">
             <option :value="undefined">{{ t('dashboard.allRewards') }}</option>
             <option v-for="category in ['limited','rare','normal','unknown']" :key="category" :value="category">{{ t(`outfit.categories.${category}`) }}</option>

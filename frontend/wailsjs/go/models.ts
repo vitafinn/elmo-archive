@@ -72,6 +72,7 @@ export namespace handler {
 	    Outcome: string;
 	    Annotation: string;
 	    Name: string;
+	    SearchNames: string[];
 	    Icon: string;
 	    Count: number;
 	    Timestamp: number;
@@ -96,6 +97,7 @@ export namespace handler {
 	        this.Outcome = source["Outcome"];
 	        this.Annotation = source["Annotation"];
 	        this.Name = source["Name"];
+	        this.SearchNames = source["SearchNames"];
 	        this.Icon = source["Icon"];
 	        this.Count = source["Count"];
 	        this.Timestamp = source["Timestamp"];
@@ -180,6 +182,7 @@ export namespace handler {
 	    id: string;
 	    itemId: number;
 	    name: string;
+	    searchNames: string[];
 	    category: string;
 	    accessNumber: number;
 	    timestamp: number;
@@ -193,6 +196,7 @@ export namespace handler {
 	        this.id = source["id"];
 	        this.itemId = source["itemId"];
 	        this.name = source["name"];
+	        this.searchNames = source["searchNames"];
 	        this.category = source["category"];
 	        this.accessNumber = source["accessNumber"];
 	        this.timestamp = source["timestamp"];

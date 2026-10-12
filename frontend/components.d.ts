@@ -17,7 +17,6 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     IMdiClose: typeof import('~icons/mdi/close')['default']
     IMdiCropSquare: typeof import('~icons/mdi/crop-square')['default']
-    IMdiHelp: typeof import('~icons/mdi/help')['default']
     IMdiMinus: typeof import('~icons/mdi/minus')['default']
   }
 }

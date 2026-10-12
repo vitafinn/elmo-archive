@@ -13,12 +13,13 @@ import (
 )
 
 type OutfitRecord struct {
-	ID           string `json:"id"`
-	ItemID       int64  `json:"itemId"`
-	Name         string `json:"name"`
-	Category     string `json:"category"`
-	AccessNumber int64  `json:"accessNumber"`
-	Timestamp    int64  `json:"timestamp"`
+	ID           string   `json:"id"`
+	ItemID       int64    `json:"itemId"`
+	Name         string   `json:"name"`
+	SearchNames  []string `json:"searchNames"`
+	Category     string   `json:"category"`
+	AccessNumber int64    `json:"accessNumber"`
+	Timestamp    int64    `json:"timestamp"`
 }
 type OutfitSeason struct {
 	ID           int64          `json:"id"`
@@ -159,5 +160,13 @@ func (a *App) GetOutfitInfo(userID, poolType int64) (OutfitInfo, error) {
 	if err != nil {
 		log.Warn().Err(err).Msg("Outfit reward categories unavailable")
 	}
-	return buildOutfitInfo(records, poolType, pools, outfits, items, lang, time.Now().Unix()), nil
+	info := buildOutfitInfo(records, poolType, pools, outfits, items, lang, time.Now().Unix())
+	languages := searchLanguages(user.GameDataDir, user.GameServer, lang)
+	for i := range info.Seasons {
+		for j := range info.Seasons[i].Records {
+			record := &info.Seasons[i].Records[j]
+			record.SearchNames = itemSearchNames(record.ItemID, items, languages)
+		}
+	}
+	return info, nil
 }

@@ -22,6 +22,7 @@ type DisplayRecord struct {
 	Outcome          string
 	Annotation       string
 	Name             string
+	SearchNames      []string
 	Icon             string
 	Count            int64
 	Timestamp        int64
@@ -139,6 +140,7 @@ func (a *App) GetPoolInfo(userId, poolType int64) (poolInfo PoolInfo, err error)
 		return PoolInfo{}, errors.New("error occurred when get item map")
 	}
 
+	searchNames := searchLanguages(user.GameDataDir, user.GameServer, langDataMap)
 	dollIconMap, err := service.GetDollIconMap(user.GameDataDir, user.GameServer)
 	if err != nil {
 		log.Error().Err(err).Msg("")
@@ -299,6 +301,7 @@ func (a *App) GetPoolInfo(userId, poolType int64) (poolInfo PoolInfo, err error)
 					Outcome:     outcome,
 					Annotation:  annotation,
 					Name:        text,
+					SearchNames: itemSearchNames(record.ItemId, itemDataMap, searchNames),
 					Icon:        icon,
 					Count:       count,
 					Timestamp:   record.Timestamp,

@@ -23,7 +23,7 @@ The executable is unsigned. Darkwinter and Haoplay (Global, Asia, Japan, Korea) 
 
 1. Open the game and sign in.
 2. In Elmo Archive, select **Import records → My game UID**. Enter the UID from your game profile.
-3. Select **Connect to game history**. If certificate setup appears, compare the displayed name and thumbprint with the Windows prompt. Select **Yes** only if they match and you trust this app. If the prompt is hidden, select **Show Windows prompt**.
+3. Select **Connect to game history**. If setup appears, read the short explanation and select **Continue to Windows**. Check that the Windows prompt names the certificate shown in the app, then select **Yes** to allow capture or **No** to cancel.
 4. In the game, open a running banner → **Details → Access Record** side tab. If Access Record is already open, close and reopen it. No pull or purchase is needed.
 5. When the app says **History connected**, select **Sync records**. Check the UID and region, then confirm. Wait for **Sync complete**.
 
